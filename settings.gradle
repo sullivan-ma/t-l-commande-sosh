@@ -1,0 +1,2 @@
+rootProject.name = "Telecommande-Sosh"
+include ':app'
