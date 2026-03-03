@@ -28,6 +28,14 @@ class MainActivity : AppCompatActivity() {
         setupButton(R.id.btnVolDown, "114")
         setupButton(R.id.btnChUp, "402")
         setupButton(R.id.btnChDown, "403")
+
+        // Ajoutez ces lignes dans setupButton
+        setupButton(R.id.btnMute, "113")
+        setupButton(R.id.btnBack, "158")
+        setupButton(R.id.btnPlayPause, "164")
+        setupButton(R.id.btnRewind, "168")
+        setupButton(R.id.btnForward, "159")
+        setupButton(R.id.btnRec, "167")
     }
 
     private fun setupButton(id: Int, key: String) {
