@@ -8,21 +8,24 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: gradle
+      - uses: actions/checkout@v4
+      
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
-    - name: Build with Gradle
-      # Ici, on utilise directement "gradle" installé sur le serveur au lieu du fichier manquant
-      run: gradle assembleDebug
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: 8.5
 
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: telecommande-sosh-debug
-        path: app/build/outputs/apk/debug/app-debug.apk
+      - name: Build with Gradle
+        run: gradle assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: telecommande-sosh-debug
+          path: app/build/outputs/apk/debug/app-debug.apk
