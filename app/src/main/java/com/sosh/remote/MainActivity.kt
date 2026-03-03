@@ -15,28 +15,37 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Bouton de recherche automatique
-        findViewById<Button>(R.id.btnSearch).setOnClickListener {
-            discoverDecoder()
-        }
+        // Assignation des boutons aux codes Orange
+        setupButton(R.id.btnSearch, "SCAN")
+        setupButton(R.id.btnPower, "116")
+        setupButton(R.id.btnHome, "139")
+        setupButton(R.id.btnUp, "103")
+        setupButton(R.id.btnDown, "108")
+        setupButton(R.id.btnLeft, "105")
+        setupButton(R.id.btnRight, "106")
+        setupButton(R.id.btnOK, "28")
+        setupButton(R.id.btnVolUp, "115")
+        setupButton(R.id.btnVolDown, "114")
+        setupButton(R.id.btnChUp, "402")
+        setupButton(R.id.btnChDown, "403")
+    }
 
-        // Bouton Power
-        findViewById<Button>(R.id.btnPower).setOnClickListener {
-            sendCommand("116") // Code 116 = Power pour Orange/Sosh
+    private fun setupButton(id: Int, key: String) {
+        findViewById<Button>(id).setOnClickListener {
+            if (key == "SCAN") discoverDecoder() else sendCommand(key)
         }
     }
 
     private fun discoverDecoder() {
-        // On teste les IPs classiques de la Livebox (192.168.1.10 à 192.168.1.25)
-        for (i in 10..25) {
+        Toast.makeText(this, "Recherche en cours...", Toast.LENGTH_SHORT).show()
+        for (i in 10..40) { // On élargit un peu la plage IP
             val testIp = "192.168.1.$i"
             val request = Request.Builder().url("http://$testIp:8080/remoteControl/cmd?operation=10").build()
-            
             client.newCall(request).enqueue(object : Callback {
                 override fun onResponse(call: Call, response: Response) {
                     if (response.isSuccessful) {
                         decoderIp = testIp
-                        runOnUiThread { Toast.makeText(this@MainActivity, "Décodeur trouvé sur $testIp", Toast.LENGTH_SHORT).show() }
+                        runOnUiThread { Toast.makeText(this@MainActivity, "Connecté au décodeur !", Toast.LENGTH_LONG).show() }
                     }
                 }
                 override fun onFailure(call: Call, e: IOException) {}
@@ -47,11 +56,10 @@ class MainActivity : AppCompatActivity() {
     private fun sendCommand(key: String) {
         decoderIp?.let { ip ->
             val url = "http://$ip:8080/remoteControl/cmd?operation=01&key=$key&mode=0"
-            val request = Request.Builder().url(url).build()
-            client.newCall(request).enqueue(object : Callback {
+            client.newCall(Request.Builder().url(url).build()).enqueue(object : Callback {
                 override fun onFailure(call: Call, e: IOException) {}
                 override fun onResponse(call: Call, response: Response) {}
             })
-        } ?: Toast.makeText(this, "Cherchez d'abord le décodeur !", Toast.LENGTH_SHORT).show()
+        } ?: Toast.makeText(this, "Appuyez sur SCAN d'abord", Toast.LENGTH_SHORT).show()
     }
 }
