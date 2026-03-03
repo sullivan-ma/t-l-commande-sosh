@@ -17,11 +17,9 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-
     - name: Build with Gradle
-      run: ./gradlew assembleDebug
+      # Ici, on utilise directement "gradle" installé sur le serveur au lieu du fichier manquant
+      run: gradle assembleDebug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
