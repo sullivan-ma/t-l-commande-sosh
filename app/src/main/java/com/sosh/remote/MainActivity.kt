@@ -15,45 +15,36 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Assignation des boutons aux codes Orange
-        setupButton(R.id.btnSearch, "SCAN")
-        setupButton(R.id.btnPower, "116")
-        setupButton(R.id.btnHome, "139")
-        setupButton(R.id.btnUp, "103")
-        setupButton(R.id.btnDown, "108")
-        setupButton(R.id.btnLeft, "105")
-        setupButton(R.id.btnRight, "106")
-        setupButton(R.id.btnOK, "28")
-        setupButton(R.id.btnVolUp, "115")
-        setupButton(R.id.btnVolDown, "114")
-        setupButton(R.id.btnChUp, "402")
-        setupButton(R.id.btnChDown, "403")
+        // Configuration de tous les boutons
+        val buttons = mapOf(
+            R.id.btnSearch to "SCAN", R.id.btnPower to "116", R.id.btnMute to "113",
+            R.id.btnUp to "103", R.id.btnDown to "108", R.id.btnLeft to "105",
+            R.id.btnRight to "106", R.id.btnOK to "28", R.id.btnBack to "158",
+            R.id.btnHome to "139", R.id.btnVolUp to "115", R.id.btnVolDown to "114",
+            R.id.btnChUp to "402", R.id.btnChDown to "403", R.id.btnRewind to "168",
+            R.id.btnPlayPause to "164", R.id.btnForward to "159",
+            R.id.btn0 to "512", R.id.btn1 to "513", R.id.btn2 to "514",
+            R.id.btn3 to "515", R.id.btn4 to "516", R.id.btn5 to "517",
+            R.id.btn6 to "518", R.id.btn7 to "519", R.id.btn8 to "520", R.id.btn9 to "521"
+        )
 
-        // Ajoutez ces lignes dans setupButton
-        setupButton(R.id.btnMute, "113")
-        setupButton(R.id.btnBack, "158")
-        setupButton(R.id.btnPlayPause, "164")
-        setupButton(R.id.btnRewind, "168")
-        setupButton(R.id.btnForward, "159")
-        setupButton(R.id.btnRec, "167")
-    }
-
-    private fun setupButton(id: Int, key: String) {
-        findViewById<Button>(id).setOnClickListener {
-            if (key == "SCAN") discoverDecoder() else sendCommand(key)
+        buttons.forEach { (id, code) ->
+            findViewById<Button>(id).setOnClickListener {
+                if (code == "SCAN") discoverDecoder() else sendCommand(code)
+            }
         }
     }
 
     private fun discoverDecoder() {
-        Toast.makeText(this, "Recherche en cours...", Toast.LENGTH_SHORT).show()
-        for (i in 10..40) { // On élargit un peu la plage IP
+        Toast.makeText(this, "Recherche du décodeur...", Toast.LENGTH_SHORT).show()
+        for (i in 10..50) {
             val testIp = "192.168.1.$i"
             val request = Request.Builder().url("http://$testIp:8080/remoteControl/cmd?operation=10").build()
             client.newCall(request).enqueue(object : Callback {
                 override fun onResponse(call: Call, response: Response) {
                     if (response.isSuccessful) {
                         decoderIp = testIp
-                        runOnUiThread { Toast.makeText(this@MainActivity, "Connecté au décodeur !", Toast.LENGTH_LONG).show() }
+                        runOnUiThread { Toast.makeText(this@MainActivity, "Connecté !", Toast.LENGTH_SHORT).show() }
                     }
                 }
                 override fun onFailure(call: Call, e: IOException) {}
@@ -68,6 +59,6 @@ class MainActivity : AppCompatActivity() {
                 override fun onFailure(call: Call, e: IOException) {}
                 override fun onResponse(call: Call, response: Response) {}
             })
-        } ?: Toast.makeText(this, "Appuyez sur SCAN d'abord", Toast.LENGTH_SHORT).show()
+        } ?: Toast.makeText(this, "Cliquez sur SCAN", Toast.LENGTH_SHORT).show()
     }
 }
